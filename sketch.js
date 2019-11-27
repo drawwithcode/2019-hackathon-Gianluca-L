@@ -2,9 +2,11 @@ var tg1_intro;
 var analyzer;
 var fft;
 var volume = 0;
+var img;
 
 function preload(){
   tg1_intro = loadSound("./assets/TG1_new.mp3");
+  img = loadImage("./assets/logo.png");
 }
 
 function setup() {
@@ -20,31 +22,34 @@ function draw() {
   background(0);
 
   volume = analyzer.getLevel();
-  volume = map(volume, 0, 1, 0, width/4);
+  volume = map(volume, 0, 1, 0, 255);
+  tint(0, 0, 255, volume*3);
+  backgroundImage(img);
 
- // "bass", "lowMid", "mid", "highMid", "treble"
 
   var spectrum = fft.analyze();
 
-  var trebEnergy = fft.getEnergy("treble");
-  var midEnergy = fft.getEnergy("mid");
-  var bassEnergy = fft.getEnergy("bass");
 
-
-  var scaleFactor = volume*0.1;
-  fill('red');
+  fill('blue');
+  push();
   rectMode(CENTER);
-  rect(width/2, height/2, scaleFactor*height/40, scaleFactor*height/40);
 
 
-  rect(width/4, height/2, height/20, 0 + trebEnergy);
+  for (var i = 0; i< spectrum.length; i++){
+  var x = map(i, 0, spectrum.length, 0, 1.5*width/2);
+  var h = -height/4 + map(spectrum[i], 0, height/4.235, height, 0);
+  rect(width/2 + x, height, width / spectrum.length, h )
+  rect(width/2 - x, height, width / spectrum.length, h )
 
-  rect(width/2 + 200, height/2, height/20, 0 + midEnergy);
+  var x2 = map(i, 0, spectrum.length, 0, 1.5*width/2);
+  var h2 = 2*height + map(spectrum[i], 0, height/4.235, height, 0);
 
-  rect(width/2 + 300, height/2, height/20, 0 + bassEnergy);
+  rect(width/2 + x2, -height*1.05, width / spectrum.length, h2 )
+  rect(width/2 - x2, -height*1.05, width / spectrum.length, h2 )
+}
+pop();
 
 }
-
 
 
 function mouseClicked() {
@@ -55,4 +60,13 @@ function mouseClicked() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function backgroundImage(img) {
+  push();
+  translate(width/2,height/2);
+  imageMode(CENTER);
+  let scale = Math.max(width/img.width,height/img.height);
+  image(img,0,0,img.width/5*scale,img.height/5*scale)
+  pop();
 }
