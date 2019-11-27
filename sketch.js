@@ -24,7 +24,9 @@ function draw() {
   volume = analyzer.getLevel();
   volume = map(volume, 0, 1, 0, 255);
   tint(0, 0, 255, volume*3);
-  backgroundImage(img);
+  //backgroundImage(img);
+  imageMode(CENTER);
+  image(img,width/2,height/2,img.width/6000000*(width*height),img.height/6000000*(width*height))
 
 
   var spectrum = fft.analyze();
